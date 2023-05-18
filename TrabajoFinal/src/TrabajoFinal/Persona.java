@@ -18,9 +18,9 @@ public abstract class Persona {
 	}
 	
 	public Persona(Persona persona) {
-		this.nombre = nombre;
-		this.direccion = direccion;
-		this.telefono = telefono;
+		this.nombre = persona.nombre;
+		this.direccion = persona.direccion;
+		this.telefono = persona.telefono;
 	}
 
 	public String getNombre() {
