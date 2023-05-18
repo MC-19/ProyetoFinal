@@ -19,10 +19,7 @@ public class Main {
     public static void main(String[] args) {
         String usu = "MC";
         String pas = "Lolalol@12";
-        String puerto = "3307";
-        String maquina = "localhost";
-        String baseDatos="trabajoProgramacion";
-        String url= "jdbc:mysql://"+maquina+":"+puerto+"/"+baseDatos;
+        String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
         Connection con = null;
         
         Set<Empresa> empresas = new LinkedHashSet<>();
