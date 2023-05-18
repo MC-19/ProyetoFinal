@@ -126,8 +126,31 @@ public class Empresa {
 
     @Override
     public String toString() {
-        return "Empresa [id_empresa=" + id_empresa + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono="
-                + telefono + ", empleados=" + empleados + ", clientes=" + clientes + ", productos=" + productos
-                + ", facturas=" + facturas + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Empresa [id_empresa=").append(id_empresa)
+          .append(", nombre=").append(nombre)
+          .append(", direccion=").append(direccion)
+          .append(", telefono=").append(telefono);
+
+        if (!empleados.isEmpty()) {
+            sb.append(", empleados=").append(empleados);
+        }
+
+        if (!clientes.isEmpty()) {
+            sb.append(", clientes=").append(clientes);
+        }
+
+        if (!productos.isEmpty()) {
+            sb.append(", productos=").append(productos);
+        }
+
+        if (!facturas.isEmpty()) {
+            sb.append(", facturas=").append(facturas);
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
+
 }
