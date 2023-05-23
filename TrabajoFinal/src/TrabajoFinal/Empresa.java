@@ -1,5 +1,6 @@
 package TrabajoFinal;
 
+import java.sql.*;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -19,27 +20,18 @@ public class Empresa {
 
     }
 
-    public Empresa(int id_empresa, String nombre, String direccion, String telefono, 
-                   Set<Empleado> empleados, Set<Cliente> clientes, Set<Producto> productos, Set<Factura> facturas) {
+    public Empresa(int id_empresa, String nombre, String direccion, String telefono) {
         this.id_empresa = id_empresa;
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
-        this.empleados.addAll(empleados);
-        this.clientes.addAll(clientes);
-        this.productos.addAll(productos);
-        this.facturas.addAll(facturas);
     }
     
     public Empresa(Empresa empresa) {
-        this.id_empresa = empresa.id_empresa;
-        this.nombre = empresa.nombre;
-        this.direccion = empresa.direccion;
-        this.telefono = empresa.telefono;
-        this.empleados = new LinkedHashSet<>(empresa.empleados);
-        this.clientes = new LinkedHashSet<>(empresa.clientes);
-        this.productos = new LinkedHashSet<>(empresa.productos);
-        this.facturas = new LinkedHashSet<>(empresa.facturas);
+        this.id_empresa = id_empresa;
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.telefono = telefono;
     }
 
     public int getId_empresa() {
@@ -105,10 +97,66 @@ public class Empresa {
     public void agregarFactura(Factura factura) {
         facturas.add(factura);
     }
+    
+    public static Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
+        String username = "MC";
+        String password = "Lolalol@12";
+
+        return DriverManager.getConnection(url, username, password);
+    }
+
+    public void insertarEmpresa(Connection connection) throws SQLException {
+        String query = "INSERT INTO empresa (id_empresa, nombre_empresa, direccion_empresa, telefono_empresa) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_empresa);
+            statement.setString(2, nombre);
+            statement.setString(3, direccion);
+            statement.setString(4, telefono);
+            statement.executeUpdate();
+        }
+    }
+
+    public void actualizarEmpresa(Connection connection) throws SQLException {
+        String query = "UPDATE empresa SET nombre_empresa = ?, direccion_empresa = ?, telefono_empresa = ? WHERE id_empresa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+            statement.setString(2, direccion);
+            statement.setString(3, telefono);
+            statement.setInt(4, id_empresa);
+            statement.executeUpdate();
+        }
+    }
+
+    public void eliminarEmpresa(Connection connection) throws SQLException {
+        String query = "DELETE FROM empresa WHERE id_empresa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_empresa);
+            statement.executeUpdate();
+        }
+    }
+
+    public static Empresa obtenerEmpresaPorId(Connection connection, int id) throws SQLException {
+        String query = "SELECT * FROM empresa WHERE id_empresa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Empresa empresa = new Empresa();
+                    empresa.setId_empresa(resultSet.getInt("id_empresa"));
+                    empresa.setNombre(resultSet.getString("nombre"));
+                    empresa.setDireccion(resultSet.getString("direccion"));
+                    empresa.setTelefono(resultSet.getString("telefono"));
+                    return empresa;
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientes, direccion, empleados, facturas, id_empresa, nombre, productos, telefono);
+        return Objects.hash(direccion, id_empresa, nombre, telefono);
     }
 
     @Override
@@ -119,38 +167,15 @@ public class Empresa {
             return false;
         Empresa other = (Empresa) obj;
         return id_empresa == other.id_empresa && Objects.equals(nombre, other.nombre)
-                && Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono)
-                && Objects.equals(empleados, other.empleados) && Objects.equals(clientes, other.clientes)
-                && Objects.equals(productos, other.productos) && Objects.equals(facturas, other.facturas);
+                && Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Empresa [id_empresa=").append(id_empresa)
-          .append(", nombre=").append(nombre)
-          .append(", direccion=").append(direccion)
-          .append(", telefono=").append(telefono);
+	@Override
+	public String toString() {
+		return "Empresa [id_empresa=" + id_empresa + ", nombre=" + nombre + ", direccion=" + direccion + ", telefono="
+				+ telefono + "]";
+	}
 
-        if (!empleados.isEmpty()) {
-            sb.append(", empleados=").append(empleados);
-        }
-
-        if (!clientes.isEmpty()) {
-            sb.append(", clientes=").append(clientes);
-        }
-
-        if (!productos.isEmpty()) {
-            sb.append(", productos=").append(productos);
-        }
-
-        if (!facturas.isEmpty()) {
-            sb.append(", facturas=").append(facturas);
-        }
-
-        sb.append("]");
-
-        return sb.toString();
-    }
-
+    
 }
+
