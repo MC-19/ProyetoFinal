@@ -1,21 +1,27 @@
 package TrabajoFinal;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class Empleado extends Persona {
     private int id_empleado;
+    private Cargo cargo;
     private double sueldo;
-    private String cargo;
-
+    private Empresa empresa;
+    
     public Empleado() {
         super();
     }
 
-    public Empleado(int id_empleado, double sueldo, String cargo) {
+    public Empleado(int id_empleado, double sueldo, Cargo cargo, Empresa empresa) {
         super();
         this.id_empleado = id_empleado;
         this.sueldo = sueldo;
         this.cargo = cargo;
+        this.empresa = empresa;
     }
 
     public Empleado(Persona persona, Empleado empleado) {
@@ -23,6 +29,7 @@ public class Empleado extends Persona {
         this.id_empleado = empleado.id_empleado;
         this.sueldo = empleado.sueldo;
         this.cargo = empleado.cargo;
+        this.empresa = empleado.empresa; 
     }
 
     public int getId_empleado() {
@@ -41,12 +48,66 @@ public class Empleado extends Persona {
         this.sueldo = sueldo;
     }
 
-    public String getCargo() {
+    public Cargo getCargo() {
         return cargo;
     }
 
-    public void setCargo(String cargo) {
+    public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+    
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+    public static Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
+        String username = "MC";
+        String password = "Lolalol@12";
+
+        return DriverManager.getConnection(url, username, password);
+    }
+     
+    public void insertarEmpleado(Connection connection) throws SQLException {
+        String query = "INSERT INTO empleado (id_empleado, nombre_empleado, direccion_empleado, "
+            + "telefono_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_empleado);
+            statement.setString(2, getNombre());
+            statement.setString(3, getDireccion());
+            statement.setString(4, getTelefono());
+            statement.setString(5, cargo.name());
+            statement.setDouble(6, sueldo);
+            statement.setInt(7, empresa.getId_empresa());
+            statement.executeUpdate();
+        }
+    }
+    
+    public void actualizarEmpleado(Connection connection) throws SQLException {
+        String query = "UPDATE empleado SET nombre_empleado = ?, direccion_empleado = ?, telefono_empleado = ?, "
+        					+ "cargo_empleado = ?, sueldo_empleado = ?, rep_id_empresa = ? WHERE id_empleado = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, getNombre());
+            statement.setString(2, getDireccion());
+            statement.setString(3, getTelefono());
+            statement.setString(4, cargo.name());
+            statement.setDouble(5, sueldo);
+            statement.setInt(6, empresa.getId_empresa());
+            statement.setInt(7, id_empleado);
+            statement.executeUpdate();
+        }
+    }
+    
+    public void eliminarEmpleado(Connection connection) throws SQLException {
+        String query = "DELETE FROM empleado WHERE id_empleado = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_empleado);
+            statement.executeUpdate();
+        }
     }
 
     @Override
@@ -66,12 +127,12 @@ public class Empleado extends Persona {
         if (getClass() != obj.getClass())
             return false;
         Empleado other = (Empleado) obj;
-        return Objects.equals(cargo, other.cargo) && id_empleado == other.id_empleado
+        return cargo == other.cargo && id_empleado == other.id_empleado
                 && Double.doubleToLongBits(sueldo) == Double.doubleToLongBits(other.sueldo);
     }
 
     @Override
     public String toString() {
-        return "Empleado [" + super.toString() + "id_empleado=" + id_empleado + ", sueldo=" + sueldo + ", cargo=" + cargo + "]";
+        return "Empleado [id_empleado=" + id_empleado + super.toString() + ", cargo=" + cargo + ", sueldo=" + sueldo + "]";
     }
 }
