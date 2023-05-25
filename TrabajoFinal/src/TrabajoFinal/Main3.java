@@ -171,7 +171,6 @@ public class Main3 {
             System.out.println("Nombre: " + empresaMostrar.getNombre());
             System.out.println("Dirección: " + empresaMostrar.getDireccion());
             System.out.println("Teléfono: " + empresaMostrar.getTelefono());
-            System.out.println("\n--- Empleados de la empresa ---");
 
             Set<Empleado> empleados = obtenerEmpleadosPorEmpresa(connection, empresaMostrar.getId_empresa());
 
@@ -194,8 +193,8 @@ public class Main3 {
             if (productos.isEmpty()) {
                 System.out.println("No hay productos registrados en esta empresa.");
             } else {
+                System.out.println("\n--- Información del producto ---");
                 for (Producto producto : productos) {
-                    System.out.println("\n--- Información del producto ---");
                     System.out.println("Nombre: " + producto.getNombre());
                     System.out.println("Teléfono: " + producto.getStock());
                     System.out.println("Cargo: " + producto.getPrecio());
@@ -208,8 +207,8 @@ public class Main3 {
             if (clientes.isEmpty()) {
                 System.out.println("No hay clientes registrados en esta empresa.");
             } else {
+                System.out.println("\n--- Información del cliente ---");
                 for (Cliente cliente : clientes) {
-                    System.out.println("\n--- Información del cliente ---");
                     System.out.println("Nombre: " + cliente.getNombre());
                     System.out.println("Dirección: " + cliente.getDireccion());
                     System.out.println("Teléfono: " + cliente.getTelefono());
