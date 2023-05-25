@@ -174,22 +174,76 @@ public class Main3 {
             System.out.println("\n--- Empleados de la empresa ---");
 
             Set<Empleado> empleados = obtenerEmpleadosPorEmpresa(connection, empresaMostrar.getId_empresa());
-            
+
             if (empleados.isEmpty()) {
                 System.out.println("No hay empleados registrados en esta empresa.");
             } else {
-            	for (Empleado empleado : empleados) {
-            	    System.out.println("Nombre: " + empleado.getNombre());
-            	    System.out.println("Dirección: " + empleado.getDireccion());
-            	    System.out.println("Teléfono: " + empleado.getTelefono());
-            	    System.out.println("Cargo: " + empleado.getCargo());
-            	    System.out.println("Sueldo: " + empleado.getSueldo());
-            	    System.out.println("----------------------");
-            	}
+                System.out.println("\n--- Información del empleado ---");
+                for (Empleado empleado : empleados) {
+                    System.out.println("Nombre: " + empleado.getNombre());
+                    System.out.println("Dirección: " + empleado.getDireccion());
+                    System.out.println("Teléfono: " + empleado.getTelefono());
+                    System.out.println("Cargo: " + empleado.getCargo());
+                    System.out.println("Sueldo: " + empleado.getSueldo());
+                    System.out.println("----------------------");
+                }
+            }
+
+            Set<Producto> productos = obtenerProductosPorEmpresa(connection, empresaMostrar.getId_empresa());
+
+            if (productos.isEmpty()) {
+                System.out.println("No hay productos registrados en esta empresa.");
+            } else {
+                for (Producto producto : productos) {
+                    System.out.println("\n--- Información del producto ---");
+                    System.out.println("Nombre: " + producto.getNombre());
+                    System.out.println("Teléfono: " + producto.getStock());
+                    System.out.println("Cargo: " + producto.getPrecio());
+                    System.out.println("----------------------");
+                }
+            }
+
+            Set<Cliente> clientes = obtenerClientesPorEmpresa(connection, empresaMostrar.getId_empresa());
+
+            if (clientes.isEmpty()) {
+                System.out.println("No hay clientes registrados en esta empresa.");
+            } else {
+                for (Cliente cliente : clientes) {
+                    System.out.println("\n--- Información del cliente ---");
+                    System.out.println("Nombre: " + cliente.getNombre());
+                    System.out.println("Dirección: " + cliente.getDireccion());
+                    System.out.println("Teléfono: " + cliente.getTelefono());
+                    System.out.println("----------------------");
+                }
             }
         } else {
             System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
         }
+    }
+
+    
+    private static Empresa obtenerEmpresaPorNombre(Connection connection, String nombre) throws SQLException {
+        String query = "SELECT * FROM empresa WHERE nombre_empresa = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Empresa empresa = new Empresa();
+                    empresa.setId_empresa(resultSet.getInt("id_empresa"));
+                    empresa.setNombre(resultSet.getString("nombre_empresa"));
+                    empresa.setDireccion(resultSet.getString("direccion_empresa"));
+                    empresa.setTelefono(resultSet.getString("telefono_empresa"));
+
+                    return empresa;
+                } else {
+                    return null;
+                }
+            }
+        }
+        
+        
     }
     
     private static Set<Empleado> obtenerEmpleadosPorEmpresa(Connection connection, int idEmpresa) throws SQLException {
@@ -217,30 +271,55 @@ public class Main3 {
 
         return empleados;
     }
+    
+    private static Set<Producto> obtenerProductosPorEmpresa(Connection connection, int idProducto) throws SQLException {
+        String query = "SELECT * FROM producto WHERE rep_id_empresa = ?";
 
-    private static Empresa obtenerEmpresaPorNombre(Connection connection, String nombre) throws SQLException {
-        String query = "SELECT * FROM empresa WHERE nombre_empresa = ?";
+        Set<Producto> productos = new LinkedHashSet<>();
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, nombre);
+            statement.setInt(1, idProducto);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Empresa empresa = new Empresa();
-                    empresa.setId_empresa(resultSet.getInt("id_empresa"));
-                    empresa.setNombre(resultSet.getString("nombre_empresa"));
-                    empresa.setDireccion(resultSet.getString("direccion_empresa"));
-                    empresa.setTelefono(resultSet.getString("telefono_empresa"));
+                while (resultSet.next()) {
+                    Producto producto = new Producto();
+                    producto.setId_producto(resultSet.getInt("id_producto"));
+                    producto.setNombre(resultSet.getString("nombre_producto"));
+                    producto.setStock(resultSet.getInt("stock"));
+                    producto.setPrecio(resultSet.getDouble("precio"));
+//                    producto.setSueldo(resultSet.getDouble("sueldo_empleado"));
 
-                    return empresa;
-                } else {
-                    return null;
+                    productos.add(producto);
                 }
             }
         }
+
+        return productos;
     }
     
-    
+    private static Set<Cliente> obtenerClientesPorEmpresa(Connection connection, int idCliente) throws SQLException {
+        String query = "SELECT * FROM cliente WHERE rep_id_empresa = ?";
+
+        Set<Cliente> clientes = new LinkedHashSet<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idCliente);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Cliente cliente = new Cliente();
+                    cliente.setId_cliente(resultSet.getInt("id_cliente"));
+                    cliente.setNombre(resultSet.getString("nombre_cliente"));
+                    cliente.setDireccion(resultSet.getString("direccion_cliente"));
+                    cliente.setTelefono(resultSet.getString("telefono_cliente"));
+
+                    clientes.add(cliente);
+                }
+            }
+        }
+
+        return clientes;
+    }
     
 //----------------------------------------------------------PARTE DE LOS EMPLEADOS------------------------------------------------------------------\\
 
@@ -444,4 +523,7 @@ public class Main3 {
             }
         }
     }
+    
+//----------------------------------------------------------PARTE DE LOS PRODUCTOS------------------------------------------------------------------\\
+
 }
