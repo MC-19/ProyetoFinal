@@ -139,6 +139,12 @@ public class Empresa {
         return id_empresa == other.id_empresa && Objects.equals(nombre, other.nombre)
                 && Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono);
     }
+
+	@Override
+	public String toString() {
+		return "Nombre: " + nombre + "\nDireccion: " + direccion + "\nTelefono: " + telefono + "";
+	}    
+    
   
 }
 

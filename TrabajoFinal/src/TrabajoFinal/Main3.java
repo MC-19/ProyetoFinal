@@ -86,7 +86,7 @@ public class Main3 {
 
     private static void ejecutarOpcionEmpresa(int opcion, Scanner scanner, Connection connection, Empresa empresa)
             throws SQLException {
-        scanner.nextLine(); // Consumir el salto de línea
+        scanner.nextLine(); 
 
         switch (opcion) {
             case 1:
@@ -165,14 +165,12 @@ public class Main3 {
         System.out.print("\nIngresa el nombre de la empresa: ");
         String nombreEmpresa = scanner.nextLine();
 
-        Empresa empresaMostrar = obtenerEmpresaPorNombre(connection, nombreEmpresa);
-        if (empresaMostrar != null) {
+        Empresa mostrarEmpresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
+        if (mostrarEmpresa != null) {
             System.out.println("\n--- Información de la empresa ---");
-            System.out.println("Nombre: " + empresaMostrar.getNombre());
-            System.out.println("Dirección: " + empresaMostrar.getDireccion());
-            System.out.println("Teléfono: " + empresaMostrar.getTelefono());
+            System.out.println(mostrarEmpresa.toString());
 
-            Set<Empleado> empleados = obtenerEmpleadosPorEmpresa(connection, empresaMostrar.getId_empresa());
+            Set<Empleado> empleados = obtenerEmpleadosPorEmpresa(connection, mostrarEmpresa.getId_empresa());
 
             if (empleados.isEmpty()) {
                 System.out.println("No hay empleados registrados en esta empresa.");
@@ -188,7 +186,7 @@ public class Main3 {
                 }
             }
 
-            Set<Producto> productos = obtenerProductosPorEmpresa(connection, empresaMostrar.getId_empresa());
+            Set<Producto> productos = obtenerProductosPorEmpresa(connection, mostrarEmpresa.getId_empresa());
 
             if (productos.isEmpty()) {
                 System.out.println("No hay productos registrados en esta empresa.");
@@ -202,7 +200,7 @@ public class Main3 {
                 }
             }
 
-            Set<Cliente> clientes = obtenerClientesPorEmpresa(connection, empresaMostrar.getId_empresa());
+            Set<Cliente> clientes = obtenerClientesPorEmpresa(connection, mostrarEmpresa.getId_empresa());
 
             if (clientes.isEmpty()) {
                 System.out.println("No hay clientes registrados en esta empresa.");
