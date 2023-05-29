@@ -40,7 +40,7 @@ public class Main3 {
 
     private static void ejecutarOpcion(int opcion, Scanner scanner, Connection connection, Empresa empresa,
             Empleado empleado) throws SQLException {
-        scanner.nextLine(); // Consumir el salto de línea
+        scanner.nextLine();
 
         switch (opcion) {
             case 1:
