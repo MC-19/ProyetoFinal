@@ -773,5 +773,167 @@ public class Main3 {
     }
     
     
+  //----------------------------------------------------------PARTE DE LOS CLIENTES------------------------------------------------------------------\\
 
+    private static void ejecutarMenuCliente(Scanner scanner, Connection connection, Cliente cliente)
+            throws SQLException {
+        int opcion;
+
+        do {
+            opcion = mostrarMenuCliente(scanner);
+            ejecutarOpcionCliente(opcion, scanner, connection, cliente);
+        } while (opcion != 0);
+    }
+
+    private static int mostrarMenuCliente(Scanner scanner) {
+        System.out.println("\n------ Menú Empleado ------");
+        System.out.println("1. Insertar cliente");
+        System.out.println("2. Actualizar cliente");
+        System.out.println("3. Eliminar cliente");
+        System.out.println("0. Volver al menú principal");
+        System.out.print("Ingresa una opción: ");
+        return scanner.nextInt();
+    }
+
+    private static void ejecutarOpcionCliente(int opcion, Scanner scanner, Connection connection, Cliente cliente)
+            throws SQLException {
+        scanner.nextLine();
+
+        switch (opcion) {
+            case 1:
+                insertarCliente(scanner, connection, cliente);
+                break;
+            case 2:
+                actualizarCliente(scanner, connection, cliente);
+                break;
+            case 3:
+                eliminarCliente(scanner, connection, cliente);
+                break;
+            case 0:
+                System.out.println("Volviendo al menú principal...");
+                break;
+            default:
+                System.out.println("Opción inválida. Intenta nuevamente.");
+                break;
+        }
+    }
+
+    private static void insertarCliente(Scanner scanner, Connection connection, Cliente cliente) throws SQLException {
+        System.out.print("\nIngresa el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+
+        if (nombreCliente.isEmpty()) {
+			System.out.println("Error: El nombre del empleado no puede estar vacio. ");
+		} else {
+            cliente.setNombre(nombreCliente);
+            
+            System.out.println("Introduce la direccion del empleado: ");
+            String direccionCliente = scanner.nextLine();
+            
+            if (direccionCliente.isEmpty()) {
+				System.out.println("Error: La dirreccion del cliente no puede estar vacia. ");
+			} else {
+				cliente.setDireccion(direccionCliente);
+				
+				System.out.println("Introduce el telefono del cliente: ");
+				String telefonoCliente = scanner.nextLine();
+				
+				if (telefonoCliente.isEmpty()) {
+					System.out.println("Error: El telefono del cliente no puede estar vacio. ");
+				} else {
+					cliente.setTelefono(telefonoCliente);
+					
+                    System.out.print("Ingresa el nombre de la empresa: ");
+                    String nombreEmpresa = scanner.nextLine();
+
+                    if (nombreEmpresa.isEmpty()) {
+                        System.out.println("Error: el nombre de la empresa no puede estar vacío.");
+                    } else {
+                        Empresa empresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
+
+                        if (empresa != null) {
+                            cliente.setEmpresa(empresa);
+                            cliente.insertarProducto(connection);
+                            System.out.println("El producto se ha insertado correctamente.");
+                        } else {
+                            System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
+                        }
+                    }
+				}
+			}
+		}
+    }
+
+
+    private static void actualizarEmpleado(Scanner scanner, Connection connection, Empleado empleado)
+            throws SQLException {
+        System.out.print("Ingresa el nombre del empleado a actualizar: ");
+        String nombreActualizar = scanner.nextLine();
+
+        Empleado empleadoActualizar = obtenerEmpleadoPorNombre(connection, nombreActualizar);
+        if (empleadoActualizar != null) {
+            System.out.print("\nIngresa el nuevo nombre del empleado: ");
+            empleadoActualizar.setNombre(scanner.nextLine());
+            System.out.print("\nIngresa la nueva contraseña del empleado: ");
+            empleadoActualizar.setContrasenya(scanner.nextLine());
+            System.out.print("Ingresa la nueva dirección del empleado: ");
+            empleadoActualizar.setDireccion(scanner.nextLine());
+            System.out.print("Ingresa el nuevo teléfono del empleado: ");
+            empleadoActualizar.setTelefono(scanner.nextLine());
+            System.out.print("Ingresa el nuevo cargo del empleado: ");
+            empleadoActualizar.setCargo(Cargo.valueOf(scanner.nextLine()));
+            System.out.print("Ingresa el nuevo sueldo del empleado: ");
+            empleadoActualizar.setSueldo(Double.parseDouble(scanner.nextLine()));
+
+            empleadoActualizar.actualizarEmpleado(connection);
+            System.out.println("El empleado se ha actualizado correctamente.");
+        } else {
+            System.out.println("No se encontró ningún empleado con el nombre proporcionado.");
+        }
+    }
+
+    private static void eliminarEmpleado(Scanner scanner, Connection connection, Empleado empleado)
+            throws SQLException {
+        System.out.print("Ingresa el nombre del empleado a eliminar: ");
+        String nombreEliminar = scanner.nextLine();
+
+        Empleado empleadoEliminar = obtenerEmpleadoPorNombre(connection, nombreEliminar);
+        if (empleadoEliminar != null) {
+            empleadoEliminar.eliminarEmpleado(connection);
+            System.out.println("El empleado se ha eliminado correctamente.");
+        } else {
+            System.out.println("No se encontró ningún empleado con el nombre proporcionado.");
+        }
+    }
+
+    private static Empleado obtenerEmpleadoPorNombre(Connection connection, String nombre) throws SQLException {
+        String query = "SELECT * FROM empleado WHERE nombre_empleado = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Empleado empleado = new Empleado();
+                    empleado.setId_empleado(resultSet.getInt("id_empleado"));
+                    empleado.setNombre(resultSet.getString("nombre_empleado"));
+                    empleado.setContrasenya(resultSet.getString("contrasenya_empleado"));
+                    empleado.setDireccion(resultSet.getString("direccion_empleado"));
+                    empleado.setTelefono(resultSet.getString("telefono_empleado"));
+                    empleado.setCargo(Cargo.valueOf(resultSet.getString("cargo_empleado")));
+                    empleado.setSueldo(resultSet.getDouble("sueldo_empleado"));
+
+                    int idEmpresa = resultSet.getInt("id_empresa");
+                    Empresa empresa = obtenerEmpresaPorId(connection, idEmpresa);
+                    if (empresa != null) {
+                        empleado.setEmpresa(empresa);
+                    }
+
+                    return empleado;
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 }

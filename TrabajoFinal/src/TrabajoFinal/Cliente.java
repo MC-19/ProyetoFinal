@@ -1,16 +1,14 @@
 package TrabajoFinal;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.Set;
 
 public class Cliente extends Persona {
     private int id_cliente;
-    
-    private Set<Factura> facturas = new LinkedHashSet<Factura>();
+    private Empresa empresa;
+
+    private Set<Factura> facturas = new LinkedHashSet<>();
 
     public Cliente() {
         super();
@@ -21,7 +19,7 @@ public class Cliente extends Persona {
         this.id_cliente = id_cliente;
     }
 
-    public Cliente (Persona persona, Cliente cliente) {
+    public Cliente(Persona persona, Cliente cliente) {
         super(persona);
         this.id_cliente = cliente.id_cliente;
     }
@@ -34,7 +32,15 @@ public class Cliente extends Persona {
         this.id_cliente = id_cliente;
     }
 
-    @Override
+    public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -56,7 +62,6 @@ public class Cliente extends Persona {
 
     @Override
     public String toString() {
-        return "Cliente [" + super.toString() + "id_cliente=" + id_cliente + "]";
-    }	
-	
+        return "Cliente [" + super.toString() + ", id_cliente=" + id_cliente + "]";
+    }
 }

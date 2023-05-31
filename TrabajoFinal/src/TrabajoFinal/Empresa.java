@@ -1,6 +1,9 @@
 package TrabajoFinal;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,7 +14,7 @@ public class Empresa {
     private String direccion;
     private String telefono;
 
-    private Set<Empleado> empleados = new LinkedHashSet<Empleado>();
+    private Set<Empleado> empleados = new LinkedHashSet<>();
     private Set<Cliente> clientes = new LinkedHashSet<>();
     private Set<Producto> productos = new LinkedHashSet<>();
     private Set<Factura> facturas = new LinkedHashSet<>();
@@ -20,57 +23,62 @@ public class Empresa {
 
     }
 
-    public Empresa(int id_empresa, String nombre, String direccion, String telefono, Set <Empleado> empleado) {
+    public Empresa(int id_empresa, String nombre, String direccion, String telefono, Set<Empleado> empleado,
+                   Set<Cliente> cliente, Set<Producto> producto, Set<Factura> factura) {
         this.id_empresa = id_empresa;
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
         this.empleados.addAll(empleado);
+        this.clientes.addAll(cliente);
+        this.productos.addAll(producto);
+        this.facturas.addAll(factura);
     }
-    
+
     public Empresa(Empresa empresa) {
         this.id_empresa = empresa.id_empresa;
         this.nombre = empresa.nombre;
         this.direccion = empresa.direccion;
         this.telefono = empresa.telefono;
-        this.empleados.addAll(empleados);
+        this.empleados.addAll(empresa.empleados);
+        this.clientes.addAll(empresa.clientes);
+        this.productos.addAll(empresa.productos);
+        this.facturas.addAll(empresa.facturas);
     }
 
-    
-
     public int getId_empresa() {
-		return id_empresa;
-	}
+        return id_empresa;
+    }
 
-	public void setId_empresa(int id_empresa) {
-		this.id_empresa = id_empresa;
-	}
+    public void setId_empresa(int id_empresa) {
+        this.id_empresa = id_empresa;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getDireccion() {
-		return direccion;
-	}
+    public String getDireccion() {
+        return direccion;
+    }
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
-	public String getTelefono() {
-		return telefono;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
-	
-	public Set<Empleado> getEmpleados() {
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public Set<Empleado> getEmpleados() {
         return empleados;
     }
 
@@ -85,7 +93,7 @@ public class Empresa {
     public Set<Factura> getFacturas() {
         return facturas;
     }
-    
+
     public static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
         String username = "MC";
@@ -140,11 +148,8 @@ public class Empresa {
                 && Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono);
     }
 
-	@Override
-	public String toString() {
-		return "Nombre: " + nombre + "\nDireccion: " + direccion + "\nTelefono: " + telefono + "";
-	}    
-    
-  
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + "\nDireccion: " + direccion + "\nTelefono: " + telefono;
+    }
 }
-
