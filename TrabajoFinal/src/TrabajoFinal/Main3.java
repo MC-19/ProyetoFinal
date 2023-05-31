@@ -15,14 +15,14 @@ public class Main3 {
         Empleado empleado = new Empleado();
         Producto producto = new Producto();
 
-        try (Connection connection = Empresa.getConnection()) {
+        try (Connection conectar = Empresa.getConnection()) {
             Scanner scanner = new Scanner(System.in);
             int opcion;
 
-            System.out.print("Ingrese el nombre de la empresa (por ejemplo, Acme Corp): ");
+            System.out.print("Ingrese el nombre de la empresa (por ejemplo, FEMPA): ");
             String nombreEmpresa = scanner.nextLine();
 
-            boolean empresaValida = verificarEmpresa(nombreEmpresa, connection);
+            boolean empresaValida = verificarEmpresa(nombreEmpresa, conectar);
 
             if (!empresaValida) {
                 System.out.println("Empresa no válida. Saliendo del programa.");
@@ -32,18 +32,18 @@ public class Main3 {
             System.out.print("Ingrese la contraseña del empleado: ");
             String contraseñaEmpleado = scanner.nextLine();
 
-            boolean empleadoValido = verificarEmpleado(contraseñaEmpleado, connection);
+            boolean empleadoValido = verificarEmpleado(contraseñaEmpleado, conectar);
 
             if (!empleadoValido) {
                 System.out.println("Empleado no válido. Saliendo del programa.");
                 return;
             }
 
-            String cargoEmpleado = obtenerCargoEmpleado(contraseñaEmpleado, connection);
+            String cargoEmpleado = obtenerCargoEmpleado(contraseñaEmpleado, conectar);
 
             do {
                 opcion = mostrarMenu(scanner, cargoEmpleado);
-                ejecutarOpcion(opcion, scanner, connection, empresa, empleado, producto );
+                ejecutarOpcion(opcion, scanner, conectar, empresa, empleado, producto );
             } while (opcion != 0);
 
             scanner.close();
@@ -157,7 +157,7 @@ public class Main3 {
         System.out.println("1. Insertar empresa");
         System.out.println("2. Actualizar empresa");
         System.out.println("3. Mostrar información de la empresa");
-        System.out.println("0. Volver al menú principal");
+        System.out.println("\n0. Volver al menú principal");
         System.out.print("Ingresa una opción: ");
         return scanner.nextInt();
     }

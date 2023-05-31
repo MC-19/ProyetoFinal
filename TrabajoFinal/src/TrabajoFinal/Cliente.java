@@ -57,39 +57,6 @@ public class Cliente extends Persona {
     @Override
     public String toString() {
         return "Cliente [" + super.toString() + "id_cliente=" + id_cliente + "]";
-    }
-    
-	public static void insertarCliente(Scanner scanner, Connection connection, Cliente cliente) throws SQLException {
-        System.out.print("\nIngresa el nombre del empleado: ");
-        String nombreCliente = scanner.nextLine();
-        
-        if (nombreCliente.isEmpty()) {
-			System.out.println("Error: El nombre del cliente no puede estar vacio. ");
-		} else {
-			cliente.setNombre(nombreCliente);
-			
-			System.out.println("Ingresa la direccion del cliente: ");
-	        String direccionCliente = scanner.nextLine();
-	        
-	        if (direccionCliente.isEmpty()) {
-				System.out.println("Error: la direccion del cliente no puede ser vacia. ");
-			} else {
-				cliente.setDireccion(direccionCliente);
-				
-				System.out.println("Ingresa el telefono del cliente");
-			}
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    }	
 	
 }

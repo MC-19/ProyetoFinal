@@ -81,10 +81,10 @@ public class Empleado extends Persona {
         return DriverManager.getConnection(url, username, password);
     }
      
-    public void insertarEmpleado(Connection connection) throws SQLException {
+    public void insertarEmpleado(Connection conectar) throws SQLException {
         String query = "INSERT INTO empleado (id_empleado, nombre_empleado, contrasnya_empleado, direccion_empleado, "
             + "telefono_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_empleado);
             statement.setString(2, getNombre());
             statement.setString(3, getDireccion());
@@ -96,10 +96,10 @@ public class Empleado extends Persona {
         }
     }
     
-    public void actualizarEmpleado(Connection connection) throws SQLException {
+    public void actualizarEmpleado(Connection conectar) throws SQLException {
         String query = "UPDATE empleado SET nombre_empleado = ?, contrasenya_empleado = ?, direccion_empleado = ?, telefono_empleado = ?, "
         					+ "cargo_empleado = ?, sueldo_empleado = ?, rep_id_empresa = ? WHERE id_empleado = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setString(1, getNombre());
             statement.setString(2, getDireccion());
             statement.setString(3, getTelefono());
@@ -111,9 +111,9 @@ public class Empleado extends Persona {
         }
     }
     
-    public void eliminarEmpleado(Connection connection) throws SQLException {
+    public void eliminarEmpleado(Connection conectar) throws SQLException {
         String query = "DELETE FROM empleado WHERE id_empleado = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_empleado);
             statement.executeUpdate();
         }

@@ -88,10 +88,10 @@ public class Producto {
         return DriverManager.getConnection(url, username, password);
     }
      
-    public void insertarProducto(Connection connection) throws SQLException {
+    public void insertarProducto(Connection conectar) throws SQLException {
         String query = "INSERT INTO producto (id_producto, nombre_producto, stock, precio, "
            + "rep_id_empresa) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_producto);
             statement.setString(2, nombre);
             statement.setInt(3, stock);
@@ -101,10 +101,10 @@ public class Producto {
         }
     }
     
-    public void actualizarProducto(Connection connection) throws SQLException {
+    public void actualizarProducto(Connection conectar) throws SQLException {
         String query = "UPDATE producto SET nombre_produto = ?, stock = ?, precio = ?, "
         					+ "rep_id_empresa = ? WHERE id_empleado = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setString(1, nombre);
             statement.setInt(2, stock);
             statement.setDouble(3, precio);
@@ -114,9 +114,9 @@ public class Producto {
         }
     }
     
-    public void eliminarProducto(Connection connection) throws SQLException {
+    public void eliminarProducto(Connection conectar) throws SQLException {
         String query = "DELETE FROM producto WHERE id_producto = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_producto);
             statement.executeUpdate();
         }

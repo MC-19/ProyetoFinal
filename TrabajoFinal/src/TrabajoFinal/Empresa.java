@@ -94,9 +94,9 @@ public class Empresa {
         return DriverManager.getConnection(url, username, password);
     }
 
-    public void insertarEmpresa(Connection connection) throws SQLException {
+    public void insertarEmpresa(Connection conectar) throws SQLException {
         String query = "INSERT INTO empresa (id_empresa, nombre_empresa, direccion_empresa, telefono_empresa) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_empresa);
             statement.setString(2, nombre);
             statement.setString(3, direccion);
@@ -105,9 +105,9 @@ public class Empresa {
         }
     }
 
-    public void actualizarEmpresa(Connection connection) throws SQLException {
+    public void actualizarEmpresa(Connection conectar) throws SQLException {
         String query = "UPDATE empresa SET nombre_empresa = ?, direccion_empresa = ?, telefono_empresa = ? WHERE id_empresa = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setString(1, nombre);
             statement.setString(2, direccion);
             statement.setString(3, telefono);
@@ -116,9 +116,9 @@ public class Empresa {
         }
     }
 
-    public void eliminarEmpresa(Connection connection) throws SQLException {
+    public void eliminarEmpresa(Connection conectar) throws SQLException {
         String query = "DELETE FROM empresa WHERE id_empresa = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_empresa);
             statement.executeUpdate();
         }
