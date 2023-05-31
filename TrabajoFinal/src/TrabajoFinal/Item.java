@@ -62,4 +62,6 @@ public class Item extends Producto {
     public String toString() {
         return "Item [" + super.toString() + "id_item=" + id_item + ", cantidad=" + cantidad + "]";
     }
+    
+    
 }
