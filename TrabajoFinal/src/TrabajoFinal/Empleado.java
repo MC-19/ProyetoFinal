@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class Empleado extends Persona {
     private int id_empleado;
+    private String contrasenya;
     private Cargo cargo;
     private double sueldo;
     private Empresa empresa;
@@ -40,7 +41,15 @@ public class Empleado extends Persona {
         this.id_empleado = id_empleado;
     }
 
-    public double getSueldo() {
+    public String getContrasenya() {
+		return contrasenya;
+	}
+
+	public void setContrasenya(String contrasenya) {
+		this.contrasenya = contrasenya;
+	}
+
+	public double getSueldo() {
         return sueldo;
     }
 
@@ -73,8 +82,8 @@ public class Empleado extends Persona {
     }
      
     public void insertarEmpleado(Connection connection) throws SQLException {
-        String query = "INSERT INTO empleado (id_empleado, nombre_empleado, direccion_empleado, "
-            + "telefono_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO empleado (id_empleado, nombre_empleado, contrasnya_empleado, direccion_empleado, "
+            + "telefono_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id_empleado);
             statement.setString(2, getNombre());
@@ -88,7 +97,7 @@ public class Empleado extends Persona {
     }
     
     public void actualizarEmpleado(Connection connection) throws SQLException {
-        String query = "UPDATE empleado SET nombre_empleado = ?, direccion_empleado = ?, telefono_empleado = ?, "
+        String query = "UPDATE empleado SET nombre_empleado = ?, contrasenya_empleado = ?, direccion_empleado = ?, telefono_empleado = ?, "
         					+ "cargo_empleado = ?, sueldo_empleado = ?, rep_id_empresa = ? WHERE id_empleado = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, getNombre());
@@ -110,29 +119,26 @@ public class Empleado extends Persona {
         }
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hash(cargo, id_empleado, sueldo);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cargo, contrasenya, empresa, id_empleado, sueldo);
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Empleado other = (Empleado) obj;
-        return cargo == other.cargo && id_empleado == other.id_empleado
-                && Double.doubleToLongBits(sueldo) == Double.doubleToLongBits(other.sueldo);
-    }
-
-    @Override
-    public String toString() {
-        return "Empleado [id_empleado=" + id_empleado + super.toString() + ", cargo=" + cargo + ", sueldo=" + sueldo + "]";
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Empleado other = (Empleado) obj;
+		return cargo == other.cargo && Objects.equals(contrasenya, other.contrasenya)
+				&& Objects.equals(empresa, other.empresa) && id_empleado == other.id_empleado
+				&& Double.doubleToLongBits(sueldo) == Double.doubleToLongBits(other.sueldo);
+	}
+	
 }

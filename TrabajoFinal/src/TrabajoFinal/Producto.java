@@ -1,5 +1,9 @@
 package TrabajoFinal;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class Producto {
@@ -8,6 +12,7 @@ public class Producto {
     private int stock;
     private double precio;
     private double IVA = 1.21;
+    private Empresa empresa;
 
     public Producto() {
 
@@ -65,6 +70,56 @@ public class Producto {
 
     public void setIVA(double iVA) {
         IVA = iVA;
+    }
+    
+    public Empresa getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Empresa empresa) {
+		this.empresa = empresa;
+	}
+
+	public static Connection getConnection() throws SQLException {
+        String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
+        String username = "MC";
+        String password = "Lolalol@12";
+
+        return DriverManager.getConnection(url, username, password);
+    }
+     
+    public void insertarProducto(Connection connection) throws SQLException {
+        String query = "INSERT INTO producto (id_producto, nombre_producto, stock, precio, "
+            + "rep_id_empresa) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_producto);
+            statement.setString(2, nombre);
+            statement.setInt(3, stock);
+            statement.setDouble(4, precio);
+            statement.setInt(7, empresa.getId_empresa());
+            statement.executeUpdate();
+        }
+    }
+    
+    public void actualizarProducto(Connection connection) throws SQLException {
+        String query = "UPDATE producto SET nombre_produto = ?, stock = ?, precio = ?, "
+        					+ "rep_id_empresa = ? WHERE id_empleado = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nombre);
+            statement.setInt(2, stock);
+            statement.setDouble(3, precio);
+            statement.setInt(6, empresa.getId_empresa());
+            statement.setInt(7, id_producto);
+            statement.executeUpdate();
+        }
+    }
+    
+    public void eliminarProducto(Connection connection) throws SQLException {
+        String query = "DELETE FROM producto WHERE id_producto = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id_producto);
+            statement.executeUpdate();
+        }
     }
 
     @Override
