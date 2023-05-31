@@ -1,9 +1,16 @@
 package TrabajoFinal;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Scanner;
+import java.util.Set;
 
 public class Cliente extends Persona {
     private int id_cliente;
+    
+    private Set<Factura> facturas = new LinkedHashSet<Factura>();
 
     public Cliente() {
         super();
@@ -15,7 +22,7 @@ public class Cliente extends Persona {
     }
 
     public Cliente (Persona persona, Cliente cliente) {
-        super(persona); // Llama al constructor de copia de la clase base (Persona)
+        super(persona);
         this.id_cliente = cliente.id_cliente;
     }
 
@@ -51,4 +58,38 @@ public class Cliente extends Persona {
     public String toString() {
         return "Cliente [" + super.toString() + "id_cliente=" + id_cliente + "]";
     }
+    
+	public static void insertarCliente(Scanner scanner, Connection connection, Cliente cliente) throws SQLException {
+        System.out.print("\nIngresa el nombre del empleado: ");
+        String nombreCliente = scanner.nextLine();
+        
+        if (nombreCliente.isEmpty()) {
+			System.out.println("Error: El nombre del cliente no puede estar vacio. ");
+		} else {
+			cliente.setNombre(nombreCliente);
+			
+			System.out.println("Ingresa la direccion del cliente: ");
+	        String direccionCliente = scanner.nextLine();
+	        
+	        if (direccionCliente.isEmpty()) {
+				System.out.println("Error: la direccion del cliente no puede ser vacia. ");
+			} else {
+				cliente.setDireccion(direccionCliente);
+				
+				System.out.println("Ingresa el telefono del cliente");
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
