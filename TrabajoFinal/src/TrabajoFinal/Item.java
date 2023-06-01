@@ -57,11 +57,5 @@ public class Item extends Producto {
         Item other = (Item) obj;
         return cantidad == other.cantidad && id_item == other.id_item;
     }
-
-    @Override
-    public String toString() {
-        return "Item [" + super.toString() + "id_item=" + id_item + ", cantidad=" + cantidad + "]";
-    }
-    
     
 }

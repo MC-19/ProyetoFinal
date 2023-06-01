@@ -82,16 +82,17 @@ public class Empleado extends Persona {
     }
      
     public void insertarEmpleado(Connection conectar) throws SQLException {
-        String query = "INSERT INTO empleado (id_empleado, nombre_empleado, contrasnya_empleado, direccion_empleado, "
+        String query = "INSERT INTO empleado (id_empleado, nombre_empleado, contrasenya_empleado, direccion_empleado, "
             + "telefono_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_empleado);
             statement.setString(2, getNombre());
-            statement.setString(3, getDireccion());
-            statement.setString(4, getTelefono());
-            statement.setString(5, cargo.name());
-            statement.setDouble(6, sueldo);
-            statement.setInt(7, empresa.getId_empresa());
+            statement.setString(3, getContrasenya());
+            statement.setString(4, getDireccion());
+            statement.setString(5, getTelefono());
+            statement.setString(6, cargo.name());
+            statement.setDouble(7, sueldo);
+            statement.setInt(8, empresa.getId_empresa());
             statement.executeUpdate();
         }
     }
