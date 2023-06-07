@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class Empleado extends Persona {
@@ -12,6 +13,8 @@ public class Empleado extends Persona {
     private Cargo cargo;
     private double sueldo;
     private Empresa empresa;
+    public static final Comparator<Empleado> COMPARADOR_SALARIOS_ASCENDENTE = Comparator.comparingDouble(Empleado::getSueldo);
+
     
     public Empleado() {
         super();
@@ -142,6 +145,21 @@ public class Empleado extends Persona {
 				&& Double.doubleToLongBits(sueldo) == Double.doubleToLongBits(other.sueldo);
 	}
 	
+	@Override
+	public String toString() {
+	    return "Empleado {" +
+	            "\n   Nombre: " + nombre +
+	            "\n   Dirección: " + direccion +
+	            "\n   Teléfono: " + telefono +
+	            "\n   Cargo: " + cargo +
+	            "\n   Sueldo: " + sueldo +
+	            "\n}";
+	}
 	
-	
+	public class ComparatorAscendente implements Comparator<Empleado> {
+	    @Override
+	    public int compare(Empleado empleado1, Empleado empleado2) {
+	        return Double.compare(empleado1.getSueldo(), empleado2.getSueldo());
+	    }
+	}
 }

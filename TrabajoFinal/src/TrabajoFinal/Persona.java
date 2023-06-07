@@ -70,5 +70,14 @@ public abstract class Persona {
 		return "Persona [nombre=" + nombre + ", direccion=" + direccion + ", telefono=" + telefono + "]";
 	}
 	
-	
+    public int compare(Empleado empleado1, Empleado empleado2) {
+        // Compara los sueldos de los empleados
+        if (empleado1.getSueldo() < empleado2.getSueldo()) {
+            return -1;
+        } else if (empleado1.getSueldo() > empleado2.getSueldo()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

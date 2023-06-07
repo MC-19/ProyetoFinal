@@ -116,9 +116,13 @@ public class Cliente extends Persona {
 		return Objects.equals(empresa, other.empresa) && Objects.equals(facturas, other.facturas)
 				&& id_cliente == other.id_cliente;
 	}
-
+	
 	@Override
-    public String toString() {
-        return "Cliente [" + super.toString() + ", id_cliente=" + id_cliente + "]";
-    }
+	public String toString() {
+	    return "Cliente {" +
+	            "\n   Nombre: " + nombre +
+	            "\n   Dirección: " + direccion +
+	            "\n   Teléfono: " + telefono +
+	            "\n}";
+	}
 }

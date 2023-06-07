@@ -143,9 +143,13 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto [id_producto=" + id_producto + ", nombre=" + nombre + ", stock=" + stock + ", precio=" + precio
-                + ", IVA=" + IVA + "]";
-    }
-    
+        return "Producto {" +
+                "\n   Nombre: " + nombre +
+                "\n   Stock: " + stock +
+                "\n   Precio: " + precio +
+                "\n   IVA: " + IVA +
+                "\n   Empresa: " + empresa +
+                "\n}";
+    }    
     
 }

@@ -148,8 +148,12 @@ public class Empresa {
                 && Objects.equals(direccion, other.direccion) && Objects.equals(telefono, other.telefono);
     }
 
-    @Override
-    public String toString() {
-        return "Nombre: " + nombre + "\nDireccion: " + direccion + "\nTelefono: " + telefono;
-    }
+	@Override
+	public String toString() {
+	    return "Empresa {" +
+	            "\n   Nombre: " + nombre +
+	            "\n   Dirección: " + direccion +
+	            "\n   Teléfono: " + telefono +
+	            "\n}";
+	}
 }
