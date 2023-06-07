@@ -40,14 +40,14 @@ public class Main3 {
             System.out.print("Ingrese la contraseña del empleado: ");
             String contraseñaEmpleado = scanner.nextLine();
 
-            boolean empleadoValido = verificarEmpleado(contraseñaEmpleado, conectar);
+            Empleado empleado = obtenerEmpleado(contraseñaEmpleado, conectar);
 
-            if (!empleadoValido) {
+            if (empleado == null) {
                 System.out.println("Empleado no válido. Saliendo del programa.");
                 return;
             }
 
-            String cargoEmpleado = obtenerCargoEmpleado(contraseñaEmpleado, conectar);
+            Cargo cargoEmpleado = empleado.getCargo();
 
             do {
                 opcion = mostrarMenu(scanner, cargoEmpleado);
@@ -59,6 +59,23 @@ public class Main3 {
             System.out.println("Error en la operación: " + e.getMessage());
         }
     }
+
+    private static Empleado obtenerEmpleado(String contraseñaEmpleado, Connection connection) throws SQLException {
+        String sql = "SELECT cargo_empleado FROM empleado WHERE contrasenya_empleado = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, contraseñaEmpleado);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String cargo = resultSet.getString("cargo_empleado");
+                Empleado empleado = new Empleado();
+                empleado.setCargo(Cargo.valueOf(cargo));
+                return empleado;
+            }
+        }
+        return null;
+    }
+
+
 
         private static boolean verificarEmpresa(String nombreEmpresa, Connection connection) throws SQLException {
             String sql = "SELECT * FROM empresa WHERE nombre_empresa = ?";
@@ -94,63 +111,95 @@ public class Main3 {
             return null;
         }
 
+        private static int mostrarMenu(Scanner scanner, Cargo cargoEmpleado) {
+            if (cargoEmpleado != null) {
+                if (cargoEmpleado == Cargo.Empleado) {
+                    System.out.println("\n--- MENÚ DE OPCIONES ---");
+                    System.out.println("3. Menú Producto");
+                    System.out.println("4. Menú Cliente");
+                    System.out.println("5. Menú Factura");
+                    System.out.println("0. Salir");
+                    System.out.print("Ingresa una opción: ");
+                    return scanner.nextInt();
+                } else if (cargoEmpleado == Cargo.Admin) {
+                    System.out.println("\n--- MENÚ DE OPCIONES ---");
+                    System.out.println("1. Menú Empresa");
+                    System.out.println("2. Menú Empleado");
+                    System.out.println("3. Menú Producto");
+                    System.out.println("4. Menú Cliente");
+                    System.out.println("5. Menú Factura");
+                    System.out.println("0. Salir");
+                    System.out.print("Ingresa una opción: ");
+                    return scanner.nextInt();
+                }
+            }
+            System.out.println("Cargo de empleado no válido");
+            return 0;
+        }
 
-        private static int mostrarMenu(Scanner scanner, String cargoEmpleado) {
-            if (cargoEmpleado.equalsIgnoreCase("Empleado")) {
-                System.out.println("\n--- MENÚ DE OPCIONES ---");
-                System.out.println("1. Menú Producto");
-                System.out.println("2. Menú Cliente");
-                System.out.println("3. Menú Factura");
-                System.out.println("0. Salir");
-                System.out.print("Ingresa una opción: ");
-                return scanner.nextInt();
-            } else if (cargoEmpleado.equalsIgnoreCase("Admin")) {
-                System.out.println("\n--- MENÚ DE OPCIONES ---");
-                System.out.println("1. Menú Empresa");
-                System.out.println("2. Menú Empleado");
-                System.out.println("3. Menú Producto");
-                System.out.println("4. Menú Cliente");
-                System.out.println("5. Menú Factura");
-                System.out.println("0. Salir");
-                System.out.print("Ingresa una opción: ");
-                return scanner.nextInt();
+
+
+
+
+
+        private static void ejecutarOpcion(int opcion, Scanner scanner, Connection connection, Empresa empresa,
+                Empleado empleado, Producto producto, Cliente cliente, Factura factura) throws SQLException {
+            scanner.nextLine();
+
+            if (empleado != null && empleado.getCargo() != null) {
+                if (empleado.getCargo().equals(Cargo.Empleado)) {
+                    switch (opcion) {
+                        case 3:
+                            ejecutarMenuProducto(scanner, connection, producto);
+                            break;
+                        case 4:
+                            ejecutarMenuCliente(scanner, connection, cliente);
+                            break;
+                        case 5:
+                            ejecutarMenuFactura(scanner, connection, factura);
+                            break;
+                        case 0:
+                            System.out.println("Saliendo del programa...");
+                            break;
+                        default:
+                            System.out.println("Opción inválida. Intenta nuevamente.");
+                            break;
+                    }
+                } else if (empleado.getCargo().equals(Cargo.Admin)) {
+                    switch (opcion) {
+                        case 1:
+                            ejecutarMenuEmpresa(scanner, connection, empresa);
+                            break;
+                        case 2:
+                            ejecutarMenuEmpleado(scanner, connection, empleado);
+                            break;
+                        case 3:
+                            ejecutarMenuProducto(scanner, connection, producto);
+                            break;
+                        case 4:
+                            ejecutarMenuCliente(scanner, connection, cliente);
+                            break;
+                        case 5:
+                            ejecutarMenuFactura(scanner, connection, factura);
+                            break;
+                        case 0:
+                            System.out.println("Saliendo del programa...");
+                            break;
+                        default:
+                            System.out.println("Opción inválida. Intenta nuevamente.");
+                            break;
+                    }
+                } else {
+                    System.out.println("Cargo de empleado no válido");
+                }
             } else {
-                System.out.println("Cargo de empleado no válido");
-                return 0;
+                System.out.println("Empleado no válido. Verifica que el empleado esté inicializado correctamente.");
             }
         }
 
 
 
 
-    private static void ejecutarOpcion(int opcion, Scanner scanner, Connection connection, Empresa empresa,
-            Empleado empleado, Producto producto, Cliente cliente, Factura factura) throws SQLException {
-        scanner.nextLine();
-
-        switch (opcion) {
-            case 1:
-                ejecutarMenuEmpresa(scanner, connection, empresa);
-                break;
-            case 2:
-                ejecutarMenuEmpleado(scanner, connection, empleado);
-                break;
-            case 3:
-                ejecutarMenuProducto(scanner, connection, producto);
-                break;
-            case 4:
-                ejecutarMenuCliente(scanner, connection, cliente);
-                break;
-            case 5:
-                ejecutarMenuFactura(scanner, connection, factura);
-                break;
-            case 0:
-                System.out.println("Saliendo del programa...");
-                break;
-            default:
-                System.out.println("Opción inválida. Intenta nuevamente.");
-                break;
-        }
-    }
     
     
     
@@ -558,7 +607,6 @@ public class Main3 {
                         if (cargoEmpleado.isEmpty()) {
                             System.out.println("Error: el cargo del empleado no puede estar vacío.");
                         } else {
-                            empleado.setCargo(Cargo.valueOf(cargoEmpleado));
 
                             System.out.print("Ingresa el sueldo del empleado: ");
                             String sueldoEmpleado = scanner.nextLine();
@@ -725,7 +773,7 @@ public class Main3 {
     }
 
     private static int mostrarMenuproducto(Scanner scanner) {
-        System.out.println("\n------ Menú Empleado ------");
+        System.out.println("\n------ Menú Productos ------");
         System.out.println("1. Insertar producto");
         System.out.println("2. Actualizar producto");
         System.out.println("3. Eliminar producto");
@@ -902,7 +950,7 @@ public class Main3 {
     }
 
     private static int mostrarMenuCliente(Scanner scanner) {
-        System.out.println("\n------ Menú Empleado ------");
+        System.out.println("\n------ Menú Cliente ------");
         System.out.println("1. Insertar cliente");
         System.out.println("2. Actualizar cliente");
         System.out.println("3. Eliminar cliente");
