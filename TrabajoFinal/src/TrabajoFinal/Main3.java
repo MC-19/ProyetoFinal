@@ -714,7 +714,7 @@ public class Main3 {
     }
     
     private static void mostrarEmpleadosOrdenadosPorSalario(Connection connection) throws SQLException {
-        String query = "SELECT nombre_empleado, cargo_empleado, sueldo_empleado, rep_id_empresa FROM empleado ORDER BY sueldo_empleado DESC ";
+        String query = "SELECT * FROM empleado ORDER BY sueldo_empleado DESC ";
 
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
@@ -722,6 +722,8 @@ public class Main3 {
             while (resultSet.next()) {
                 Empleado empleado = new Empleado();
                 empleado.setNombre(resultSet.getString("nombre_empleado"));
+                empleado.setDireccion(resultSet.getString("direccion_empleado"));
+                empleado.setTelefono(resultSet.getString("telefono_empleado"));
                 empleado.setCargo(Cargo.valueOf(resultSet.getString("cargo_empleado")));
                 empleado.setSueldo(resultSet.getDouble("sueldo_empleado"));
 
