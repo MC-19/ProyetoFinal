@@ -1096,10 +1096,10 @@ public class Main3 {
                 insertarFactura(scanner, connection, factura);
                 break;
             case 2:
-//                actualizarFactura(scanner, connection, factura);
+                actualizarFactura(scanner, connection, factura);
                 break;
             case 3:
-//                eliminarFactura(scanner, connection, factura);
+                eliminarFactura(scanner, connection, factura);
                 break;
             case 0:
                 System.out.println("Volviendo al menú principal...");
@@ -1144,7 +1144,7 @@ public class Main3 {
 
             if (producto != null) {
                 factura.setProducto(producto);
-                double total = factura.getProducto().getPrecio() * factura.getCantidad();
+                double total = factura.getProducto().getPrecio() * factura.getCantidad() * factura.getProducto().getIVA();
                 factura.setTotal(total);
 
                 System.out.print("Ingresa el nombre del cliente: ");
@@ -1175,6 +1175,52 @@ public class Main3 {
         } else {
             System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
         }
+    }
+    
+    private static void actualizarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
+        System.out.print("Ingresa el número de factura que deseas actualizar: ");
+        int numeroFactura = Integer.parseInt(scanner.nextLine());
+        Factura facturaExistente = obtenerFacturaPorNumero(connection, numeroFactura);
+
+        if (facturaExistente != null) {
+            System.out.print("Ingresa la nueva cantidad de productos: ");
+            int nuevaCantidad = Integer.parseInt(scanner.nextLine());
+            facturaExistente.setCantidad(nuevaCantidad);
+
+
+            facturaExistente.actualizarFactura(connection);
+            System.out.println("La factura se ha actualizado correctamente.");
+        } else {
+            System.out.println("No se encontró ninguna factura con el número proporcionado.");
+        }
+    }
+
+    private static void eliminarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
+        System.out.print("Ingresa el número de factura que deseas eliminar: ");
+        int numeroFactura = Integer.parseInt(scanner.nextLine());
+        Factura facturaExistente = obtenerFacturaPorNumero(connection, numeroFactura);
+
+        if (facturaExistente != null) {
+            facturaExistente.eliminarFactura(connection);
+            System.out.println("La factura se ha eliminado correctamente.");
+        } else {
+            System.out.println("No se encontró ninguna factura con el número proporcionado.");
+        }
+    }
+
+    private static Factura obtenerFacturaPorNumero(Connection connection, int idFactura) throws SQLException {
+        String query = "SELECT * FROM factura WHERE id_factura = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, idFactura);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (resultSet.next()) {
+            factura.setId_factura(resultSet.getInt("id_factura"));
+
+            return factura;
+        }
+
+        return null; 
     }
 
 }
