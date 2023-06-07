@@ -902,8 +902,6 @@ public class Main3 {
                 if (resultSet.next()) {
                     producto.setId_producto(resultSet.getInt("id_producto"));
                     producto.setNombre(resultSet.getString("nombre_producto"));
-                    producto.setStock(resultSet.getInt("stock"));
-                    producto.setPrecio(resultSet.getFloat("precio"));
 
                     int idEmpresa = resultSet.getInt("rep_id_empresa");
                     Empresa empresa = obtenerEmpresaPorId(connection, idEmpresa);
@@ -1161,7 +1159,7 @@ public class Main3 {
     }
 
     private static void insertarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
-        System.out.print("Ingresa el nombre de la empresa: ");
+        System.out.print("\nIngresa el nombre de la empresa: ");
         String nombreEmpresa = scanner.nextLine();
         Empresa empresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
 
@@ -1170,7 +1168,7 @@ public class Main3 {
 
             System.out.println("Formas de Pago:");
             for (formaPago forma : formaPago.values()) {
-                System.out.println(forma.name());
+                System.out.println("{" + forma.name() + "}");
             }
             System.out.print("\nIngresa la forma de pago: ");
             String pago = scanner.nextLine();
@@ -1188,7 +1186,13 @@ public class Main3 {
             int cantidad = Integer.parseInt(scanner.nextLine());
             factura.setCantidad(cantidad);
 
-            System.out.print("Ingresa el nombre del producto: ");
+            System.out.println("Productos de la empresa:");
+            List<Producto> productos = obtenerProductosPorEmpresa2(connection, empresa);
+            for (Producto producto : productos) {
+                System.out.println("{" + producto.getNombre() + "}");
+            }
+
+            System.out.print("\nIngresa el nombre del producto: ");
             String nombreProducto = scanner.nextLine();
             Producto producto = obtenerProductoPorNombre(connection, nombreProducto);
 
@@ -1211,6 +1215,16 @@ public class Main3 {
                     if (empleado != null) {
                         factura.setEmpleado(empleado);
 
+                        int stockActual = factura.getProducto().getStock();
+                        int cantidadFactura = factura.getCantidad();
+                        if (stockActual >= cantidadFactura) {
+                            int stockActualizado = stockActual - cantidadFactura;
+                            factura.getProducto().setStock(stockActualizado);
+                            actualizarStockProducto(connection, factura.getProducto());
+                        } else {
+                            System.out.println("Error: la cantidad ingresada excede el stock disponible del producto.");
+                        }
+
                         factura.insertarFactura(connection);
                         System.out.println("La factura se ha insertado correctamente.");
                     } else {
@@ -1226,8 +1240,8 @@ public class Main3 {
             System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
         }
     }
-    
-    private static void actualizarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
+
+	private static void actualizarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
         System.out.print("Ingresa el número de factura que deseas actualizar: ");
         int numeroFactura = Integer.parseInt(scanner.nextLine());
         Factura facturaExistente = obtenerFacturaPorNumero(connection, numeroFactura);
@@ -1271,6 +1285,34 @@ public class Main3 {
         }
 
         return null; 
+    }
+    
+    private static void actualizarStockProducto(Connection connection, Producto producto) throws SQLException {
+        String query = "UPDATE producto SET stock = ? WHERE id_producto = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, producto.getStock());
+            statement.setInt(2, producto.getId_producto());
+            statement.executeUpdate();
+        }
+    }
+    
+    private static List<Producto> obtenerProductosPorEmpresa2(Connection connection, Empresa empresa) throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM producto WHERE rep_id_empresa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, empresa.getId_empresa());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Producto producto = new Producto();
+                    producto.setId_producto(resultSet.getInt("id_producto"));
+                    producto.setNombre(resultSet.getString("nombre_producto"));
+                    producto.setStock(resultSet.getInt("stock"));
+                    producto.setPrecio(resultSet.getDouble("precio"));
+                    productos.add(producto);
+                }
+            }
+        }
+        return productos;
     }
 
 }
