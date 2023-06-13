@@ -414,8 +414,8 @@ public class Main3 {
                     Producto producto = new Producto();
                     producto.setId_producto(resultSet.getInt("id_producto"));
                     producto.setNombre(resultSet.getString("nombre_producto"));
-                    producto.setStock(resultSet.getInt("stock"));
                     producto.setPrecio(resultSet.getDouble("precio"));
+                    producto.setStock(resultSet.getInt("stock"));
 
                     productos.add(producto);
                 }
@@ -783,7 +783,7 @@ public class Main3 {
         System.out.print("Ingresa una opción: ");
         return scanner.nextInt();
     }
-    
+
     private static void ejecutaropcionProducto(int opcion, Scanner scanner, Connection connection, Producto producto)
             throws SQLException {
         scanner.nextLine();
@@ -816,47 +816,37 @@ public class Main3 {
         } else {
             producto.setNombre(nombreProducto);
 
-            System.out.print("Ingresa el stock del producto: ");
-            int stockProducto = scanner.nextInt();
+            System.out.print("Ingresa el precio del producto: ");
+            double precioProducto = scanner.nextDouble();
             scanner.nextLine(); // Consumir el carácter de nueva línea pendiente
 
-            if (stockProducto <= 0) {
-                System.out.println("Error: el stock del producto no puede estar vacío.");
+            if (precioProducto <= 0) {
+                System.out.println("Error: el precio del producto no puede estar vacío.");
             } else {
-                producto.setStock(stockProducto);
+                producto.setPrecio(precioProducto);
 
-                System.out.print("Ingresa el precio del producto: ");
-                double precioProducto = scanner.nextDouble();
-                scanner.nextLine(); // Consumir el carácter de nueva línea pendiente
+                System.out.print("Ingresa el nombre de la empresa: ");
+                String nombreEmpresa = scanner.nextLine();
 
-                if (precioProducto <= 0) {
-                    System.out.println("Error: el precio del producto no puede estar vacío.");
+                if (nombreEmpresa.isEmpty()) {
+                    System.out.println("Error: el nombre de la empresa no puede estar vacío.");
                 } else {
-                    producto.setPrecio(precioProducto);
+                    Empresa empresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
 
-                    System.out.print("Ingresa el nombre de la empresa: ");
-                    String nombreEmpresa = scanner.nextLine();
-
-                    if (nombreEmpresa.isEmpty()) {
-                        System.out.println("Error: el nombre de la empresa no puede estar vacío.");
+                    if (empresa != null) {
+                        producto.setEmpresa(empresa);
+                        producto.insertarProducto(connection);
+                        System.out.println("El producto se ha insertado correctamente.");
                     } else {
-                        Empresa empresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
-
-                        if (empresa != null) {
-                            producto.setEmpresa(empresa);
-                            producto.insertarProducto(connection);
-                            System.out.println("El producto se ha insertado correctamente.");
-                        } else {
-                            System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
-                        }
+                        System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
                     }
                 }
             }
         }
     }
 
-    
-	private static void actualizarProducto(Scanner scanner, Connection connection, Producto producto) throws SQLException {
+
+    private static void actualizarProducto(Scanner scanner, Connection connection, Producto producto) throws SQLException {
         System.out.print("Ingresa el nombre del producto a actualizar: ");
         String nombreActualizar = scanner.nextLine();
         
@@ -865,33 +855,30 @@ public class Main3 {
         if (productoActualizar != null) {
             System.out.print("\nIngresa el nuevo nombre del producto: ");
             productoActualizar.setNombre(scanner.nextLine());
-            System.out.print("\nIngresa el nuevo stock del producto: ");
-            productoActualizar.setNombre(scanner.nextLine());
             System.out.print("\nIngresa el nuevo precio del producto: ");
             productoActualizar.setNombre(scanner.nextLine());
             
             productoActualizar.actualizarProducto(connection);
             System.out.println("El producto se ha actualizado correctamente.");
-		}else {
-            System.out.println("Error : El producto no se ha actualizado. ");
-		}
-	}
-	
-	
-	private static void eliminarProducto(Scanner scanner, Connection connection, Producto producto) throws SQLException {
-        System.out.print("Ingresa el nombre del empleado a eliminar: ");
+        } else {
+            System.out.println("Error: El producto no se ha encontrado.");
+        }
+    }
+
+
+    private static void eliminarProducto(Scanner scanner, Connection connection, Producto producto) throws SQLException {
+        System.out.print("Ingresa el nombre del producto a eliminar: ");
         String nombreEliminar = scanner.nextLine();
 
         Producto productoEliminar = obtenerProductoPorNombre(connection, nombreEliminar);
         if (productoEliminar != null) {
-        	productoEliminar.eliminarProducto(connection);
-            System.out.println("El empleado se ha eliminado correctamente.");
+            productoEliminar.eliminarProducto(connection);
+            System.out.println("El producto se ha eliminado correctamente.");
         } else {
-            System.out.println("No se encontró ningún empleado con el nombre proporcionado.");
+            System.out.println("No se encontró ningún producto con el nombre proporcionado.");
         }
-		
-	}
-	
+    }
+
     private static Producto obtenerProductoPorNombre(Connection connection, String nombre) throws SQLException {
         String query = "SELECT * FROM Producto WHERE nombre_producto = ?";
 
@@ -902,6 +889,7 @@ public class Main3 {
                 if (resultSet.next()) {
                     producto.setId_producto(resultSet.getInt("id_producto"));
                     producto.setNombre(resultSet.getString("nombre_producto"));
+                    producto.setNombre(resultSet.getString("precio"));
 
                     int idEmpresa = resultSet.getInt("rep_id_empresa");
                     Empresa empresa = obtenerEmpresaPorId(connection, idEmpresa);
@@ -916,7 +904,7 @@ public class Main3 {
             }
         }
     }
-    
+
     private static Producto obtenerProductoPorId(Connection connection, int idProducto) throws SQLException {
         String query = "SELECT nombre_producto FROM Producto WHERE id_producto = ?";
 
@@ -935,6 +923,7 @@ public class Main3 {
             }
         }
     }
+
     
     
   //----------------------------------------------------------PARTE DE LOS CLIENTES------------------------------------------------------------------\\
@@ -1135,7 +1124,7 @@ public class Main3 {
         return scanner.nextInt();
     }
 
-    private static void ejecutarOpcionFactura(int opcion, Scanner scanner, Connection connection,  Factura factura)
+    private static void ejecutarOpcionFactura(int opcion, Scanner scanner, Connection connection, Factura factura)
             throws SQLException {
         scanner.nextLine();
 
@@ -1159,89 +1148,98 @@ public class Main3 {
     }
 
     private static void insertarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
-        System.out.print("\nIngresa el nombre de la empresa: ");
+        System.out.println("\nIngrese el nombre de la empresa: ");
         String nombreEmpresa = scanner.nextLine();
         Empresa empresa = obtenerEmpresaPorNombre(connection, nombreEmpresa);
 
         if (empresa != null) {
             factura.setEmpresa(empresa);
 
-            System.out.println("Formas de Pago:");
+            System.out.println("Formas de pago: ");
             for (formaPago forma : formaPago.values()) {
                 System.out.println("{" + forma.name() + "}");
             }
-            System.out.print("\nIngresa la forma de pago: ");
+
+            System.out.println("Ingrese la forma de pago: ");
             String pago = scanner.nextLine();
 
             if (pago.isEmpty()) {
-                System.out.println("Error: la forma de pago no puede ser vacía. ");
+                System.out.println("La forma de pago no puede estar vacía. ");
             } else {
                 factura.setPago(formaPago.valueOf(pago));
-            }
 
-            LocalDate fecha = LocalDate.now();
-            factura.setFecha(fecha);
+                LocalDate fecha = LocalDate.now();
+                factura.setFecha(fecha);
 
-            System.out.print("Ingresa la cantidad de productos: ");
-            int cantidad = Integer.parseInt(scanner.nextLine());
-            factura.setCantidad(cantidad);
+                System.out.println("Ingrese la cantidad del producto: ");
+                int cantidad = Integer.parseInt(scanner.nextLine());
+                scanner.nextLine();
 
-            System.out.println("Productos de la empresa:");
-            List<Producto> productos = obtenerProductosPorEmpresa2(connection, empresa);
-            for (Producto producto : productos) {
-                System.out.println("{" + producto.getNombre() + "}");
-            }
-
-            System.out.print("\nIngresa el nombre del producto: ");
-            String nombreProducto = scanner.nextLine();
-            Producto producto = obtenerProductoPorNombre(connection, nombreProducto);
-
-            if (producto != null) {
-                factura.setProducto(producto);
-                double total = factura.getProducto().getPrecio() * factura.getCantidad() * factura.getProducto().getIVA();
-                factura.setTotal(total);
-
-                System.out.print("Ingresa el nombre del cliente: ");
-                String nombreCliente = scanner.nextLine();
-                Cliente cliente = obtenerClientePorNombre(connection, nombreCliente);
-
-                if (cliente != null) {
-                    factura.setCliente(cliente);
-
-                    System.out.print("Ingresa el nombre del empleado: ");
-                    String nombreEmpleado = scanner.nextLine();
-                    Empleado empleado = obtenerEmpleadoPorNombre(connection, nombreEmpleado);
-
-                    if (empleado != null) {
-                        factura.setEmpleado(empleado);
-
-                        int stockActual = factura.getProducto().getStock();
-                        int cantidadFactura = factura.getCantidad();
-                        if (stockActual >= cantidadFactura) {
-                            int stockActualizado = stockActual - cantidadFactura;
-                            factura.getProducto().setStock(stockActualizado);
-                            actualizarStockProducto(connection, factura.getProducto());
-                        } else {
-                            System.out.println("Error: la cantidad ingresada excede el stock disponible del producto.");
-                        }
-
-                        factura.insertarFactura(connection);
-                        System.out.println("La factura se ha insertado correctamente.");
-                    } else {
-                        System.out.println("No se encontró ningún empleado con el nombre proporcionado.");
-                    }
+                if (cantidad <= 0) {
+                    System.out.println("La cantidad debe ser superior a 0. ");
                 } else {
-                    System.out.println("No se encontró ningún cliente con el nombre proporcionado.");
+                    factura.setCantidad(cantidad);
+
+                    System.out.println("Ingrese el nombre del producto: ");
+                    String nombreProducto = scanner.nextLine();
+
+                    if (nombreProducto.isEmpty()) {
+                        System.out.println("El nombre del producto no puede estar vacío");
+                    } else {
+                        Producto producto = obtenerProductoPorNombre2(connection, nombreProducto);
+
+                        if (producto != null) {
+                            if (producto.getStock() >= cantidad) {
+                                factura.setProducto(producto);
+                                int nuevoStockProducto = producto.getStock() - cantidad;
+                                producto.setStock(nuevoStockProducto);
+
+                                producto.setEmpresa(empresa); 
+
+                                producto.actualizarProducto(connection);
+
+                                double total = producto.getPrecio() * cantidad * producto.getIVA();
+                                factura.setTotal(total);
+
+                                System.out.println("Ingrese el nombre del cliente: ");
+                                String nombreCliente = scanner.nextLine();
+                                Cliente cliente = obtenerClientePorNombre(connection, nombreCliente);
+
+                                if (cliente != null) {
+                                    factura.setCliente(cliente);
+
+                                    System.out.println("Ingrese el nombre del empleado: ");
+                                    String nombreEmpleado = scanner.nextLine();
+                                    Empleado empleado = obtenerEmpleadoPorNombre(connection, nombreEmpleado);
+
+                                    if (empleado != null) {
+                                        factura.setEmpleado(empleado);
+
+                                        factura.insertarFactura(connection, factura);
+
+                                        System.out.println("Factura ingresada correctamente.");
+                                    } else {
+                                        System.out.println("No se encontró ningún empleado con el nombre proporcionado.");
+                                    }
+                                } else {
+                                    System.out.println("No se encontró ningún cliente con el nombre proporcionado.");
+                                }
+                            } else {
+                                System.out.println("No hay suficiente stock disponible para el producto.");
+                            }
+                        } else {
+                            System.out.println("No se encontró ningún producto con el nombre proporcionado.");
+                        }
+                    }
                 }
-            } else {
-                System.out.println("No se encontró ningún producto con el nombre proporcionado.");
             }
         } else {
             System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
         }
     }
 
-	private static void actualizarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
+
+    private static void actualizarFactura(Scanner scanner, Connection connection, Factura factura) throws SQLException {
         System.out.print("Ingresa el número de factura que deseas actualizar: ");
         int numeroFactura = Integer.parseInt(scanner.nextLine());
         Factura facturaExistente = obtenerFacturaPorNumero(connection, numeroFactura);
@@ -1250,7 +1248,6 @@ public class Main3 {
             System.out.print("Ingresa la nueva cantidad de productos: ");
             int nuevaCantidad = Integer.parseInt(scanner.nextLine());
             facturaExistente.setCantidad(nuevaCantidad);
-
 
             facturaExistente.actualizarFactura(connection);
             System.out.println("La factura se ha actualizado correctamente.");
@@ -1279,40 +1276,31 @@ public class Main3 {
         ResultSet resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
+            Factura factura = new Factura();
             factura.setId_factura(resultSet.getInt("id_factura"));
-
             return factura;
         }
 
-        return null; 
+        return null;
     }
-    
-    private static void actualizarStockProducto(Connection connection, Producto producto) throws SQLException {
-        String query = "UPDATE producto SET stock = ? WHERE id_producto = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, producto.getStock());
-            statement.setInt(2, producto.getId_producto());
-            statement.executeUpdate();
+
+    private static Producto obtenerProductoPorNombre2(Connection connection, String nombreProducto) throws SQLException {
+        String query = "SELECT * FROM Producto WHERE nombre_producto = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, nombreProducto);
+        ResultSet resultSet = statement.executeQuery();
+
+        if (resultSet.next()) {
+            Producto producto = new Producto();
+            producto.setId_producto(resultSet.getInt("id_producto"));
+            producto.setNombre(resultSet.getString("nombre_producto"));
+            producto.setPrecio(resultSet.getDouble("precio"));
+            producto.setStock(resultSet.getInt("stock"));
+
+            return producto;
         }
-    }
-    
-    private static List<Producto> obtenerProductosPorEmpresa2(Connection connection, Empresa empresa) throws SQLException {
-        List<Producto> productos = new ArrayList<>();
-        String query = "SELECT * FROM producto WHERE rep_id_empresa = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, empresa.getId_empresa());
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Producto producto = new Producto();
-                    producto.setId_producto(resultSet.getInt("id_producto"));
-                    producto.setNombre(resultSet.getString("nombre_producto"));
-                    producto.setStock(resultSet.getInt("stock"));
-                    producto.setPrecio(resultSet.getDouble("precio"));
-                    productos.add(producto);
-                }
-            }
-        }
-        return productos;
+
+        return null;
     }
 
 }

@@ -78,9 +78,9 @@ public class Factura {
         return total;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+	public void setTotal(double total) {
+	    this.total = total;
+	}
 
     public Cliente getCliente() {
         return cliente;
@@ -122,23 +122,28 @@ public class Factura {
         return DriverManager.getConnection(url, username, password);
     }
 
-    public void insertarFactura(Connection connection) throws SQLException {
+    public void insertarFactura(Connection connection, Factura factura) throws SQLException {
         String query = "INSERT INTO Factura (id_factura, forma_pago, fecha_pago, cantidad_producto, producto_nombre, total, rep_id_producto, rep_id_cliente, rep_id_empleado, rep_id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, id_factura);
-            statement.setString(2, pago.name());
-            statement.setObject(3, fecha);
-            statement.setInt(4, cantidad);
-            statement.setString(5, producto.getNombre());
-            statement.setDouble(6, total);
-            statement.setInt(7, producto.getId_producto());
-            statement.setInt(8, cliente.getId_cliente());
-            statement.setInt(9, empleado.getId_empleado());
-            statement.setInt(10, empresa.getId_empresa());
+            statement.setInt(1, factura.getId_factura());
+            statement.setString(2, factura.getPago().name());
+            statement.setObject(3, factura.getFecha());
+            statement.setInt(4, factura.getCantidad());
+            	if (factura.getProducto() != null) {
+            		statement.setString(5, factura.getProducto().getNombre());
+            	} else {
+            		statement.setString(5, "Nombre de Producto No Disponible");
+            	}
+            statement.setDouble(6, factura.getTotal());
+            statement.setInt(7, factura.getProducto().getId_producto());
+            statement.setInt(8, factura.getCliente().getId_cliente());
+            statement.setInt(9, factura.getEmpleado().getId_empleado());
+            statement.setInt(10, factura.getEmpresa().getId_empresa());
             statement.executeUpdate();
             System.out.println("Factura insertada exitosamente.");
         }
     }
+
     
     public void actualizarFactura(Connection conectar) throws SQLException {
         String query = "UPDATE factura SET forma_pago = ?, fecha_pago = ?, cantidad_producto = ?, producto_nombre = ?, total = ?, "

@@ -49,14 +49,14 @@ public class Producto {
     }
 
     public int getStock() {
-        return stock;
-    }
+		return stock;
+	}
 
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
 
-    public double getPrecio() {
+	public double getPrecio() {
         return precio;
     }
 
@@ -69,51 +69,49 @@ public class Producto {
     }
 
     public void setIVA(double iVA) {
-        IVA = iVA;
+        this.IVA = iVA;
     }
-    
+
     public Empresa getEmpresa() {
-		return empresa;
-	}
+        return empresa;
+    }
 
-	public void setEmpresa(Empresa empresa) {
-		this.empresa = empresa;
-	}
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
 
-	public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         String url = "jdbc:mysql://localhost:3307/trabajoProgramacion";
         String username = "MC";
         String password = "Lolalol@12";
 
         return DriverManager.getConnection(url, username, password);
     }
-     
+
     public void insertarProducto(Connection conectar) throws SQLException {
-        String query = "INSERT INTO producto (id_producto, nombre_producto, stock, precio, "
-           + "rep_id_empresa) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO producto (id_producto, nombre_producto, precio, stock, rep_id_empresa) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setInt(1, id_producto);
             statement.setString(2, nombre);
-            statement.setInt(3, stock);
-            statement.setDouble(4, precio);
+            statement.setDouble(3, precio);
+            statement.setInt(4, stock);
             statement.setInt(5, empresa.getId_empresa());
             statement.executeUpdate();
         }
     }
-    
+
     public void actualizarProducto(Connection conectar) throws SQLException {
-        String query = "UPDATE producto SET nombre_produto = ?, stock = ?, precio = ?, "
-        					+ "rep_id_empresa = ? WHERE id_empleado = ?";
+        String query = "UPDATE producto SET nombre_producto = ?, precio = ?, stock = ?, rep_id_empresa = ? WHERE id_producto = ?";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setString(1, nombre);
-            statement.setInt(2, stock);
-            statement.setDouble(3, precio);
+            statement.setDouble(2, precio);
+            statement.setInt(3, stock);
             statement.setInt(4, empresa.getId_empresa());
             statement.setInt(5, id_producto);
             statement.executeUpdate();
         }
     }
-    
+
     public void eliminarProducto(Connection conectar) throws SQLException {
         String query = "DELETE FROM producto WHERE id_producto = ?";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
@@ -124,7 +122,7 @@ public class Producto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(IVA, id_producto, nombre, precio, stock);
+        return Objects.hash(IVA, empresa, id_producto, nombre, precio, stock);
     }
 
     @Override
@@ -136,20 +134,20 @@ public class Producto {
         if (getClass() != obj.getClass())
             return false;
         Producto other = (Producto) obj;
-        return Double.doubleToLongBits(IVA) == Double.doubleToLongBits(other.IVA) && id_producto == other.id_producto
-                && Objects.equals(nombre, other.nombre)
-                && Double.doubleToLongBits(precio) == Double.doubleToLongBits(other.precio) && stock == other.stock;
+        return Double.doubleToLongBits(IVA) == Double.doubleToLongBits(other.IVA)
+                && Objects.equals(empresa, other.empresa) && id_producto == other.id_producto
+                && Objects.equals(nombre, other.nombre) && Double.doubleToLongBits(precio) == Double.doubleToLongBits(other.precio)
+                && stock == other.stock;
     }
 
     @Override
     public String toString() {
         return "Producto {" +
                 "\n   Nombre: " + nombre +
-                "\n   Stock: " + stock +
                 "\n   Precio: " + precio +
+                "\n   Stock: " + stock +
                 "\n   IVA: " + IVA +
                 "\n   Empresa: " + empresa +
                 "\n}";
-    }    
-    
+    }
 }
