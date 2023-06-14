@@ -22,35 +22,35 @@ public class gestorEmpresa {
     
 //----------------------------------------------------------PARTE DE LA EMPRESA------------------------------------------------------------------\\
 
-    static void actualizarEmpresa(Scanner scanner, Connection connection, Empresa empresa)
-            throws SQLException {
-        System.out.print("Ingresa el nombre de la empresa a actualizar: ");
-        String nombreEmpresaActualizar = scanner.nextLine();
-
-        Empresa empresaActualizar = obtenerEmpresaPorNombre(connection, nombreEmpresaActualizar);
-        if (empresaActualizar != null) {
-            System.out.print("\nIngresa el nuevo nombre de la empresa: ");
-            empresaActualizar.setNombre(scanner.nextLine());
-            System.out.print("Ingresa la nueva dirección de la empresa: ");
-            empresaActualizar.setDireccion(scanner.nextLine());
-            System.out.print("Ingresa el nuevo teléfono de la empresa: ");
-            empresaActualizar.setTelefono(scanner.nextLine());
-
-            try {
-                connection.setAutoCommit(false); // Desactivar la confirmación automática de la transacción
-                empresaActualizar.actualizarEmpresa(connection); // Actualizar la empresa en la base de datos
-                connection.commit(); // Confirmar la transacción
-                System.out.println("La empresa se ha actualizado correctamente.");
-            } catch (SQLException e) {
-                connection.rollback(); // En caso de error, deshacer los cambios realizados
-                System.out.println("Error al actualizar la empresa: " + e.getMessage());
-            } finally {
-                connection.setAutoCommit(true); // Reactivar la confirmación automática de la transacción
-            }
-        } else {
-            System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
-        }
-    }
+//    static void actualizarEmpresa(Scanner scanner, Connection connection, Empresa empresa)
+//            throws SQLException {
+//        System.out.print("Ingresa el nombre de la empresa a actualizar: ");
+//        String nombreEmpresaActualizar = scanner.nextLine();
+//
+//        Empresa empresaActualizar = obtenerEmpresaPorNombre(connection, nombreEmpresaActualizar);
+//        if (empresaActualizar != null) {
+//            System.out.print("\nIngresa el nuevo nombre de la empresa: ");
+//            empresaActualizar.setNombre(scanner.nextLine());
+//            System.out.print("Ingresa la nueva dirección de la empresa: ");
+//            empresaActualizar.setDireccion(scanner.nextLine());
+//            System.out.print("Ingresa el nuevo teléfono de la empresa: ");
+//            empresaActualizar.setTelefono(scanner.nextLine());
+//
+//            try {
+//                connection.setAutoCommit(false); // Desactivar la confirmación automática de la transacción
+//                empresaActualizar.actualizarEmpresa(connection); // Actualizar la empresa en la base de datos
+//                connection.commit(); // Confirmar la transacción
+//                System.out.println("La empresa se ha actualizado correctamente.");
+//            } catch (SQLException e) {
+//                connection.rollback(); // En caso de error, deshacer los cambios realizados
+//                System.out.println("Error al actualizar la empresa: " + e.getMessage());
+//            } finally {
+//                connection.setAutoCommit(true); // Reactivar la confirmación automática de la transacción
+//            }
+//        } else {
+//            System.out.println("No se encontró ninguna empresa con el nombre proporcionado.");
+//        }
+//    }
 
      static void mostrarInformacionEmpresa(Scanner scanner, Connection connection, Empresa empresa)
             throws SQLException {

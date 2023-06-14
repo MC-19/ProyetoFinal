@@ -246,7 +246,7 @@ public class Main3 {
 
     private static int mostrarMenuEmpresa(Scanner scanner) {
         System.out.println("\n------ Menú Empresa ------");
-        System.out.println("1. Actualizar empresa");
+//        System.out.println("1. Actualizar empresa");
         System.out.println("2. Mostrar información de la empresa");
         System.out.println("\n0. Volver al menú principal");
         System.out.print("Ingresa una opción: ");
@@ -258,9 +258,9 @@ public class Main3 {
         scanner.nextLine(); 
 
         switch (opcion) {
-            case 1:
-                gestorEmpresa.actualizarEmpresa(scanner, connection, empresa);
-                break;
+//            case 1:
+//                gestorEmpresa.actualizarEmpresa(scanner, connection, empresa);
+//                break;
             case 2:
                 gestorEmpresa.mostrarInformacionEmpresa(scanner, connection, empresa);
                 break;

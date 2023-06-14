@@ -13,7 +13,6 @@ public class Empleado extends Persona {
     private Cargo cargo;
     private double sueldo;
     private Empresa empresa;
-    public static final Comparator<Empleado> COMPARADOR_SALARIOS_ASCENDENTE = Comparator.comparingDouble(Empleado::getSueldo);
 
     
     public Empleado() {
