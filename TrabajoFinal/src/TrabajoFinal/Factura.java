@@ -200,7 +200,6 @@ public class Factura {
 	            "\n   Id Factura: " + id_factura +
 	            "\n   Forma de pago: " + pago +
 	            "\n   Fecha del pago: " + fecha +
-	            "\n   Fecha del pago: " + fecha +
 	            "\n   Cantidad del producto: " + cantidad +
 	            "\n   Nombre del producto: " + producto.getNombre() +
 	            "\n   Cliente: " + cliente.getNombre() +
