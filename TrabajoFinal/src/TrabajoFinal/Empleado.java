@@ -105,12 +105,13 @@ public class Empleado extends Persona {
         					+ "cargo_empleado = ?, sueldo_empleado = ?, rep_id_empresa = ? WHERE id_empleado = ?";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
             statement.setString(1, getNombre());
-            statement.setString(2, getDireccion());
-            statement.setString(3, getTelefono());
-            statement.setString(4, cargo.name());
-            statement.setDouble(5, sueldo);
-            statement.setInt(6, empresa.getId_empresa());
-            statement.setInt(7, id_empleado);
+            statement.setString(2, getContrasenya());
+            statement.setString(3, getDireccion());
+            statement.setString(4, getTelefono());
+            statement.setString(5, cargo.name());
+            statement.setDouble(6, sueldo);
+            statement.setInt(7, empresa.getId_empresa());
+            statement.setInt(8, id_empleado);
             statement.executeUpdate();
         }
     }

@@ -337,6 +337,7 @@ public class gestorEmpresa {
                         if (cargoEmpleado.isEmpty()) {
                             System.out.println("Error: el cargo del empleado no puede estar vacío.");
                         } else {
+                        	empleado.setCargo(Cargo.valueOf(cargoEmpleado));
 
                             // Solicitar y obtener el sueldo del empleado
                             System.out.print("Ingresa el sueldo del empleado: ");
