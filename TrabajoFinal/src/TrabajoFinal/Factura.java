@@ -146,21 +146,23 @@ public class Factura {
 
     
     public void actualizarFactura(Connection conectar) throws SQLException {
-        String query = "UPDATE factura SET forma_pago = ?, fecha_pago = ?, cantidad_producto = ?, producto_nombre = ?, total = ?, "
-        					+ "rep_id_producto = ?, rep_id_cliente = ?, rep_id_emplead0 = ?, rep_id_empresa = ? WHERE id_cliente = ?";
+        String query = "UPDATE factura SET forma_pago = ?, fecha_pago = ?, cantidad_producto = ?, producto_nombre = ?, total = ?, " +
+                "rep_id_producto = ?, rep_id_cliente = ?, rep_id_empleado = ?, rep_id_empresa = ? WHERE id_factura = ?";
         try (PreparedStatement statement = conectar.prepareStatement(query)) {
-            statement.setString(2, pago.name());
-            statement.setObject(3, fecha);
-            statement.setInt(4, cantidad);
-            statement.setString(5, producto.getNombre());
-            statement.setDouble(6, total);
-            statement.setInt(7, producto.getId_producto());
-            statement.setInt(8, cliente.getId_cliente());
-            statement.setInt(9, empleado.getId_empleado());
-            statement.setInt(10, empresa.getId_empresa());
+            statement.setString(1, pago.name());
+            statement.setObject(2, fecha);
+            statement.setInt(3, cantidad);
+            statement.setString(4, producto.getNombre());
+            statement.setDouble(5, total);
+            statement.setInt(6, producto.getId_producto());
+            statement.setInt(7, cliente.getId_cliente());
+            statement.setInt(8, empleado.getId_empleado());
+            statement.setInt(9, empresa.getId_empresa());
+            statement.setInt(10, id_factura);
             statement.executeUpdate();
         }
     }
+
     
     public void eliminarFactura(Connection conectar) throws SQLException {
         String query = "DELETE FROM factura WHERE id_factura = ?";
@@ -191,4 +193,19 @@ public class Factura {
 				&& Objects.equals(producto, other.producto)
 				&& Double.doubleToLongBits(total) == Double.doubleToLongBits(other.total);
 	}
+
+	@Override
+	public String toString() {
+	    return "Factura {" +
+	            "\n   Id Factura: " + id_factura +
+	            "\n   Forma de pago: " + pago +
+	            "\n   Fecha del pago: " + fecha +
+	            "\n   Fecha del pago: " + fecha +
+	            "\n   Cantidad del producto: " + cantidad +
+	            "\n   Nombre del producto: " + producto.getNombre() +
+	            "\n   Cliente: " + cliente.getNombre() +
+	            "\n   Empleado: " + empleado.getNombre() +
+	            "\n}";
+	}
+	
 }

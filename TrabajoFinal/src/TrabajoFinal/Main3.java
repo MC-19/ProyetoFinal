@@ -359,14 +359,8 @@ public class Main3 {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 
                 for (Factura factura : facturas) {
-                    System.out.println("Forma de pago: " + factura.getPago());
-                    System.out.println("Fecha del pago: " + factura.getFecha().format(formatter));
-                    System.out.println("Cantidad del producto: " + factura.getCantidad());
-                    System.out.println("Nombre del producto: " + factura.getProducto().getNombre());
-                    System.out.println("Importe total: " + factura.getTotal());
-                    System.out.println("Cliente que compró el producto: " + factura.getCliente().getNombre());
-                    System.out.println("Empleado que realizó la factura: " + factura.getEmpleado().getNombre());
-                    System.out.println("----------------------");
+
+                    System.out.println(factura.toString());
                 }
             }
             
@@ -1024,6 +1018,7 @@ public class Main3 {
         System.out.println("1. Insertar cliente");
         System.out.println("2. Actualizar cliente");
         System.out.println("3. Eliminar cliente");
+        System.out.println("4. Buscar facturas por cliente");
         System.out.println("0. Volver al menú principal");
         System.out.print("Ingresa una opción: ");
         return scanner.nextInt();
@@ -1042,6 +1037,9 @@ public class Main3 {
                 break;
             case 3:
                 eliminarCliente(scanner, connection, cliente);
+                break;
+            case 4:
+                buscarFacturasPorCliente(scanner, connection, cliente);
                 break;
             case 0:
                 System.out.println("Volviendo al menú principal...");
@@ -1146,6 +1144,40 @@ public class Main3 {
         }
     }
 
+    private static void buscarFacturasPorCliente(Scanner scanner, Connection connection, Cliente cliente)
+            throws SQLException {
+        System.out.print("Ingresa el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+
+        // Obtener el cliente por su nombre
+        Cliente clienteBuscar = obtenerClientePorNombre(connection, nombreCliente);
+
+        if (clienteBuscar != null) {
+            // Obtener las facturas del cliente
+            Set<Factura> facturas = obtenerFacturasPorCliente(connection, clienteBuscar.getId_cliente());
+
+            if (!facturas.isEmpty()) {
+                System.out.println("\nFacturas del cliente " + clienteBuscar.getNombre() + ":");
+                for (Factura factura : facturas) {
+                    System.out.println("Forma de pago: " + factura.getPago());
+                    System.out.println("Fecha de emisión: " + factura.getFecha());
+                    System.out.println("Cantidad de producto: " + factura.getCantidad());
+                    System.out.println("Nombre del producto: " + factura.getNombre());
+                    System.out.println("Total de la factura: " + factura.getTotal());
+                    System.out.println("Nombre del empleado: " + factura.getEmpleado().getNombre());
+                    System.out.println("-----------------------------");
+                }
+            } else {
+                System.out.println("No se encontraron facturas para el cliente " + clienteBuscar.getNombre());
+            }
+        } else {
+            System.out.println("No se encontró ningún cliente con el nombre proporcionado.");
+        }
+    }
+
+
+
+
 
     private static Cliente obtenerClientePorNombre(Connection connection, String nombre) throws SQLException {
         String query = "SELECT * FROM Cliente WHERE nombre_cliente = ?";
@@ -1192,6 +1224,41 @@ public class Main3 {
         }
     }
 
+
+    private static Set<Factura> obtenerFacturasPorCliente(Connection connection, int idCliente) throws SQLException {
+        String query = "SELECT * FROM Factura WHERE rep_id_cliente = ?";
+
+        Set<Factura> facturas = new LinkedHashSet<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idCliente);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Factura factura = new Factura();
+                    factura.setId_factura(resultSet.getInt("id_factura"));
+                    factura.setPago(formaPago.valueOf(resultSet.getString("forma_pago")));
+                    factura.setFecha(resultSet.getDate("fecha_pago").toLocalDate());
+                    factura.setCantidad(resultSet.getInt("cantidad_producto"));
+                    factura.setNombre(resultSet.getString("producto_nombre"));
+                    factura.setTotal(resultSet.getDouble("total"));
+
+                    int repIdEmpleado = resultSet.getInt("rep_id_empleado");
+                    Empleado empleado = obtenerEmpleadoPorId(connection, repIdEmpleado);
+                    if (empleado != null) {
+                        factura.setEmpleado(empleado);
+                    }
+
+                    facturas.add(factura);
+                }
+            }
+        }
+
+        return facturas;
+    }
+
+    
+    
 
 
     
